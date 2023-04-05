@@ -25,7 +25,7 @@ function get_customer($email) {
     $ch = curl_init();
     //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET'); 
     //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); 
-    $url = $infosmollie['url']."/customers";
+    $url = $infosmollie['url']."/customers?limit=250";
 
     curl_setopt($ch, CURLOPT_URL,  $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -107,7 +107,7 @@ function create_payment($amountvalue, $description, $order_id, $customer) {
     );
     $datas = array(
         "amount" => $amount,
-        "redirectUrl" => "https://creditercompte.florain.fr?step=etape3&order_id=".$order_id,
+        "redirectUrl" => "https://moncompte.florain.fr?step=etape3&order_id=".$order_id,
         "method" => $method,
         "metadata" => array(
             "order_id" => $order_id
@@ -396,6 +396,7 @@ function create_subscription_annually($amountvalue, $customer, $mandate, $descri
     return $infos;
 }
 
+//function update_subscription($subscription, $customer, $amountvalue, $datestr) {
 function update_subscription($subscription, $customer, $amountvalue) {
     include("config.php");
     $ch = curl_init();
@@ -403,12 +404,14 @@ function update_subscription($subscription, $customer, $amountvalue) {
 
     curl_setopt($ch, CURLOPT_URL,  $url);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
     $amount = array(
         "currency" => "EUR",
         "value" => $amountvalue
     );
     $datas = array(
         "amount" => $amount
+        //"startDate" => $datestr
     );
     //var_dump($datas);
     $json = json_encode($datas);

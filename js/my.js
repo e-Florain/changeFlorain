@@ -2,6 +2,12 @@ $(document).ready(function(){
     $('select').formSelect();
   });
 
+  $(document).ready(function(){
+    $('.datepicker').datepicker(
+      {'format': 'yyyy-mm-dd'}
+    );
+  });
+
 function checkValuesSub() {
   var amount = $("#amount").val();
   if (amount < 20) {
