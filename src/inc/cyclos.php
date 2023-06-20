@@ -17,6 +17,9 @@ function getAuth($login, $password)
 
         $response = curl_exec($ch);
         $res = json_decode($response, true);
+        if ($res == NULL) {
+            return -2;
+        }
         if (isset($res["code"])) {
             if ($res["code"] == "login") {
                 return -1;

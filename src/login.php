@@ -19,7 +19,11 @@ if (isset($_POST['email']) and isset($_POST['password'])) {
         if ($result == -1) {
             $strmsg = "Email ou mot de passe invalide";
             echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
-        } else {
+        } elseif ($result == -2) {
+            $strmsg = "Problème de connexion avec le serveur. Merci de contacter support@florain.fr";
+            echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
+        }
+        else {
             $_SESSION["name"] = $result["user"]["display"];
             $_SESSION['email'] = $_POST['email'];
             header('Location: index.php');
