@@ -14,7 +14,12 @@ $assos = getOdooAssos();
 ?>
     <div class="row">
         <div class="col s10 offset-m2 title">
-            Créditer le compte
+            Bienvenu.e <?php echo $_SESSION["name"]; ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s10 offset-m2 title">
+            Obtenir des florains (par CB)
         </div>
     </div>
     <div class="row">
@@ -84,7 +89,7 @@ $assos = getOdooAssos();
     <br/>
         <div class="row">
             <div class="col s10 m6 offset-m2 title">
-                Prélèvements
+                Modifier le change mensuel (par prélèvement)
             </div>
         </div> 
     <div class="row">   

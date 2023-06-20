@@ -107,7 +107,7 @@ function create_payment($amountvalue, $description, $order_id, $customer) {
     );
     $datas = array(
         "amount" => $amount,
-        "redirectUrl" => "https://moncompte.florain.fr?step=etape3&order_id=".$order_id,
+        "redirectUrl" => "https://moncompte.florain.fr/src/index.php?step=etape3&order_id=".$order_id,
         "method" => $method,
         "metadata" => array(
             "order_id" => $order_id

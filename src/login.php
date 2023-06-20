@@ -4,49 +4,26 @@ session_destroy();
 session_start();
 
 if (isset($_POST['email']) and isset($_POST['password'])) {
-    require_once 'inc/configureCyclos.php';
-    $loginService = new Cyclos\LoginService();
+    include_once('inc/cyclos.php');
+    
+    /*$internalAuthService = new Cyclos\InternalAuthService();
     Cyclos\Configuration::setChannel("webServices");
     $params = new stdclass();
     $params->user = array("principal" => $_POST['email']);
     $params->password = $_POST['password'];
     $params->remoteAddress = $_SERVER['REMOTE_ADDR'];
+    //$result = $internalAuthService->getCurrentAuth();
+    //var_dump($result);*/
     if (isset($_POST['email'])) {
-        try {
-            $result = $loginService->loginUser($params);
-            //$result = $loginService->login();
-        } catch (Cyclos\ConnectionException $e) {
-            $strmsg = "Serveur cyclos injoignable";
+        $result = getAuth($_POST['email'], $_POST['password']);
+        if ($result == -1) {
+            $strmsg = "Email ou mot de passe invalide";
             echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
-            //die();
-        } catch (Cyclos\ServiceException $e) {
-            //var_dump($e->errorCode);
-            switch ($e->errorCode) {
-                case 'VALIDATION':
-                    //echo("Missing username / password");
-                    $strmsg = "Email ou mot de passe manquant";
-                    echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
-                    break;
-                case 'LOGIN':
-                    //echo("Invalid username / password");
-                    $strmsg = "Email ou mot de passe invalide";
-                    echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
-                    break;
-                case 'REMOTE_ADDRESS_BLOCKED':
-                    $strmsg = "Votre accès est bloqué pour trop de tentatives échouées";
-                    echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
-                    //echo("Your access is blocked by exceeding invalid login attempts");
-                    break;
-                case 'INACCESSIBLE_PRINCIPAL':
-                    $_SESSION['email'] = $_POST['email'];
-                    header('Location: index.php');
-                default:
-                    echo("Error while performing login: {$e->errorCode}");
-                    break;
-            }
-            //die();
+        } else {
+            $_SESSION["name"] = $result["user"]["display"];
+            $_SESSION['email'] = $_POST['email'];
+            header('Location: index.php');
         }
-
     }
 }
 ?>

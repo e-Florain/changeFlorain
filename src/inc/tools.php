@@ -1,4 +1,31 @@
 <?php
+function postCallbackUrl() {
+    include("config.php");
+    $ch = curl_init();
+    try {
+        $url = $infocallback['url'];
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $response = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo curl_error($ch);
+            die();
+        }
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if($http_code == intval(200) or $http_code == intval(201)){
+            return true;
+        }
+        else{
+            return -1;
+        }
+    } catch (\Throwable $th) {
+        throw $th;
+    } finally {
+        curl_close($ch);
+    }
+}
+
 function updateAdh($datas) {
     include("config.php");
     $ch = curl_init();
