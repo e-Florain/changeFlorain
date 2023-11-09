@@ -21,3 +21,31 @@ function checkValuesSub() {
     return false;
   }
 }
+
+function checkIBAN() {
+  var iban = $("#iban").val();
+  if (!isIBAN(iban)) {
+    return false
+  } else {
+    return true
+  }
+}
+
+function isIBAN(iban) {
+  var regex = /^FR\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[A-Z0-9]\s*[\d]\s*[\d]\s*$/;
+  return regex.test(iban);
+}
+
+$( "#iban" ).change(function() {
+  console.log("check iban");
+  $("#iban").addClass("invalid");
+  var iban = $("#iban").val();
+  if (!isIBAN(iban)) {
+    console.log("not iban");
+    $("#iban").removeClass("valid");
+    $("#iban").addClass("invalid");
+  } else {
+    $("#iban").removeClass("invalid");
+    $("#iban").addClass("valid");
+  }
+});

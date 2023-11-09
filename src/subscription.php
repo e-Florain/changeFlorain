@@ -87,6 +87,7 @@ if ($sub == false) {
                 </div>
                 -->
                 <button type="submit" id="form_step1" name="form_step1" class="btn-primary btn" data-bcup-haslogintext="no">Valider</button>
+                <a href="../" class="btn-primary btn">Annuler</a>
                 </form>
             </div>
     </div>

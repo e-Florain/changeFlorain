@@ -10,7 +10,17 @@ include_once('inc/tools.php');
 $subscriptions = get_subscriptions($_SESSION['email']);
 $adhs = getAdh($_SESSION['email']);
 $assos = getOdooAssos();
-//var_dump($adh);
+$customer = get_customer($_SESSION['email']);
+//var_dump($customer);
+$mandates = list_mandates($customer[1]['id'])['_embedded']['mandates'];
+$mandateusr = array();
+foreach ($mandates as $mandate) {
+    if ($mandate['status'] == 'valid') {
+        $mandateusr['iban'] = $mandate['details']['consumerAccount'];
+        $mandateusr['signatureDate'] = $mandate['signatureDate'];
+        $mandateusr['id'] = $mandate['id'];
+    }
+}
 ?>
     <div class="row">
         <div class="col s10 offset-m2 title">
@@ -153,6 +163,30 @@ $assos = getOdooAssos();
                 <td><?php echo $name; ?></td>
                 <!--td><?php //echo $name; ?></td>
                 <td><?php //echo $name; ?></td>-->
+            </tr>
+        </table>
+    </div>
+<!----------------------------------------------------------------------------->
+    <br/>
+    <div class="row">
+        <div class="col s10 m6 offset-m2 title">
+            Modifier les coordonnées bancaires
+        </div>
+    </div> 
+    <div class="row">
+        <?php
+        //echo $adh[0]['orga_choice'];
+        foreach ($assos as $asso) {
+            if ($asso['id'] == $adhs[0]['orga_choice']) {
+                $name = $asso['name'];
+            }
+        }
+        ?>
+        <table class="col s10 m6 offset-m2">
+            <th>IBAN</th><th>Date de création</th>
+            <tr>
+                <td><?php echo $mandateusr['iban']."<a href='mandate.php?id=".$mandateusr['id']."'>";?><i class="material-icons">edit</i></a></td>
+                <td><?php echo $mandateusr['signatureDate']; ?></td>
             </tr>
         </table>
     </div>

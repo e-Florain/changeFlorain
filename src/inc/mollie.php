@@ -166,7 +166,6 @@ function list_mandates($customer) {
         'Authorization: Bearer '.$infosmollie['key'],
         'Content-Type: application/json'
     ));
-
     $response = curl_exec($ch);
     curl_close($ch);
     $infos = json_decode($response, true);
