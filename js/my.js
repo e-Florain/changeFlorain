@@ -36,7 +36,20 @@ function isIBAN(iban) {
   return regex.test(iban);
 }
 
-$( "#iban" ).change(function() {
+$('#iban').keypress(function(e){
+  console.log("key iban");
+  var iban = $("#iban").val();
+  if (!isIBAN(iban)) {
+    console.log("not iban");
+    $("#iban").removeClass("valid");
+    $("#iban").addClass("invalid");
+  } else {
+    $("#iban").removeClass("invalid");
+    $("#iban").addClass("valid");
+  }
+});
+
+/*$( "#iban" ).change(function() {
   console.log("check iban");
   $("#iban").addClass("invalid");
   var iban = $("#iban").val();
@@ -49,3 +62,4 @@ $( "#iban" ).change(function() {
     $("#iban").addClass("valid");
   }
 });
+*/
