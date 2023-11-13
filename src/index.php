@@ -12,7 +12,7 @@ $adhs = getAdh($_SESSION['email']);
 $assos = getOdooAssos();
 $customer = get_customer($_SESSION['email']);
 //var_dump($customer);
-$mandates = list_mandates($customer[1]['id'])['_embedded']['mandates'];
+$mandates = list_mandates($customer[0]['id'])['_embedded']['mandates'];
 $mandateusr = array();
 foreach ($mandates as $mandate) {
     if ($mandate['status'] == 'valid') {

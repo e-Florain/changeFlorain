@@ -395,6 +395,43 @@ function create_subscription_annually($amountvalue, $customer, $mandate, $descri
     return $infos;
 }
 
+
+function create_subscription($amountvalue, $customer, $mandate, $description, $interval, $startdate) {
+    include("config.php");
+    $ch = curl_init();
+    $url = $infosmollie['url']."/customers/".$customer."/subscriptions";
+
+    curl_setopt($ch, CURLOPT_URL,  $url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    $amount = array(
+        "currency" => "EUR",
+        "value" => $amountvalue
+    );
+    $datas = array(
+        "amount" => $amount,
+        "interval" => $interval,
+        "mandateId" => $mandate,
+        "startDate" => $startdate,
+        "webhookUrl" => "https://helloasso.florain.fr",
+        "description" => $description
+
+    );
+    //var_dump($datas);
+    $json = json_encode($datas);
+    //echo $json;
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json); 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Authorization: Bearer '.$infosmollie['key'],
+        'Content-Type: application/json'
+    ));
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $infos = json_decode($response, true);
+    return $infos;
+}
+
 //function update_subscription($subscription, $customer, $amountvalue, $datestr) {
 function update_subscription($subscription, $customer, $amountvalue) {
     include("config.php");

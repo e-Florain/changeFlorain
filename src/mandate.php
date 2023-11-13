@@ -9,7 +9,8 @@ include_once('inc/mollie.php');
 include_once('inc/tools.php');
 
 $customer = get_customer($_SESSION['email']);
-$cust = $customer[1];
+$subscriptions = get_subscriptions($_SESSION['email']);
+$cust = $customer[0];
 $mandates = list_mandates($cust['id'])['_embedded']['mandates'];
 $mandateusr = array();
 foreach ($mandates as $mandate) {
@@ -19,15 +20,54 @@ foreach ($mandates as $mandate) {
         $mandateusr['id'] = $mandate['id'];
     }
 }
+$subs_to_create = array();
+$sub = array();
+foreach ($subscriptions as $subscription) {
+    if ($subscription['status'] == 'active') {
+        if (preg_match('/Change/', $subscription['description'])) {
+            $sub['description'] = $subscription['description'];
+            $sub['amount'] = $subscription['amount']['value'];
+            $sub['interval'] = $subscription['interval'];
+            $sub['startDate'] = $subscription['nextPaymentDate'];
+            $subs_to_create[] = $sub;
+        }
+        if (preg_match('/Adhésion/', $subscription['description'])) {
+            $sub['description'] = $subscription['description'];
+            $sub['amount'] = $subscription['amount']['value'];
+            $sub['interval'] = $subscription['interval'];
+            $sub['startDate'] = $subscription['nextPaymentDate'];
+            $subs_to_create[] = $sub;
+        }
+    }
+}
+
 if (isset($_POST)) {
     if (isset($_POST['iban'])) {
         $infos = get_customer_by_id($_POST['customerId']);
         if ($infos['email'] == $_SESSION['email']) {
-            create_mandate($cust['id'], $_POST['iban'], $cust['name']);
-            if (isset($mandateusr['id'])) {
-                revoke_mandate($cust['id'], $mandateusr['id']);
+            $infos = create_mandate($cust['id'], $_POST['iban'], $cust['name']);
+            //var_dump($infos);
+            $mandate = $infos['id'];
+            if (isset($infos['id'])) {
+                if (isset($mandateusr['id'])) {
+                    revoke_mandate($cust['id'], $mandateusr['id']);
+                }
+                foreach ($subs_to_create as $sub) {
+                    //var_dump($sub);
+                    //echo $sub['amount']." ".$cust['id']." ".$mandate." ".$sub['description']." ".$sub['interval']." ".$sub['startDate'];
+                    $res = create_subscription($sub['amount'], $cust['id'], $mandate, $sub['description'], $sub['interval'], $sub['startDate']);
+                    //var_dump($res);
+                }
+                header('Location: index.php');
+            } else {
+                if ($infos['status'] == 422) {
+                    $strmsg = $infos['detail'];
+                    if ($infos['detail'] == "The bank account is invalid") {
+                        $strmsg = "Le compte bancaire est invalide";
+                    }
+                    echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
+                }
             }
-            header('Location: index.php');
         } else {
             $strmsg = "Vous n'êtes pas autorisé";
             echo '<div class="message error" onclick="this.classList.add(\'hidden\');">'.$strmsg.'</div>';
